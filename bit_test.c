@@ -1,29 +1,40 @@
 #include <stdio.h>
+#include <stdint.h> // Required for uint32_t
 
-// Your complete Bit Manipulation Library
+// Your existing macros
 #define SET_BIT(reg, bit)    ((reg) |= (1 << (bit)))
 #define CLEAR_BIT(reg, bit)  ((reg) &= ~(1 << (bit)))
 #define TOGGLE_BIT(reg, bit) ((reg) ^= (1 << (bit)))
 #define READ_BIT(reg, bit)   (((reg) >> (bit)) & 1)
 
+// VIRTUAL HARDWARE DEFINITION 
+typedef struct {
+    uint32_t MODER; // Mode register
+    uint32_t IDR;   // Input data register
+    uint32_t ODR;   // Output data register
+} GPIO_TypeDef;
+
 int main() {
-    unsigned char my_register = 0; // 00000000
+    //  "virtual" Port A in computer's RAM
+    GPIO_TypeDef GPIOA;
 
-    // 1. Set bit 4
-    SET_BIT(my_register, 4);
-    printf("After SET_BIT(4): %d\n", my_register);
+    //  Initialize everything
+    GPIOA.MODER = 0;
+    GPIOA.IDR = 0;
+    GPIOA.ODR = 0;
 
-    // 2. Read bit 4
-    unsigned char is_pressed = READ_BIT(my_register, 4);
-    printf("Is Bit 4 on? %d\n", is_pressed);
+    // 
+// 1. Configure Pin 5 as output
+    SET_BIT(GPIOA.MODER, 5);
+    printf("MODER after config: %u\n", GPIOA.MODER);
 
-    // 3. Toggle bit 4
-    TOGGLE_BIT(my_register, 4);
-    printf("After TOGGLE_BIT(4): %d\n", my_register);
+    // 2. Turn LED ON
+    SET_BIT(GPIOA.ODR, 5);
+    printf("ODR (LED ON): %u\n", GPIOA.ODR);
 
-    // 4. Clear bit 4
-    CLEAR_BIT(my_register, 4);
-    printf("After CLEAR_BIT(4): %d\n", my_register);
+    // 3. Turn LED OFF
+    CLEAR_BIT(GPIOA.ODR, 5);
+    printf("ODR (LED OFF): %u\n", GPIOA.ODR);
 
     return 0;
 }
